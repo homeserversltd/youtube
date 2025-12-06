@@ -91,3 +91,10 @@ export interface LogsResponse {
   error?: string;
 }
 
+export interface FetchSubscriptionResponse {
+  success: boolean;
+  message?: string;
+  data?: ChannelDownloadResult;
+  error?: string;
+}
+

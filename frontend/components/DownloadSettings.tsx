@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { YoutubeSettings } from '../types';
 
 interface DownloadSettingsProps {
@@ -6,6 +6,26 @@ interface DownloadSettingsProps {
   onUpdate: (settings: Partial<YoutubeSettings>) => Promise<void>;
   isLoading?: boolean;
 }
+
+// Mapping of quality presets to their format strings
+const QUALITY_FORMAT_MAP: Record<string, string> = {
+  'best': 'best',
+  'bestvideo+bestaudio': 'bestvideo+bestaudio',
+  'worst': 'worst',
+  'bestvideo': 'bestvideo',
+  'bestaudio': 'bestaudio',
+  'custom': '' // Will be set by user input
+};
+
+// Reverse lookup: find quality preset from format string
+const getQualityFromFormat = (format: string): string => {
+  for (const [quality, formatStr] of Object.entries(QUALITY_FORMAT_MAP)) {
+    if (format === formatStr) {
+      return quality;
+    }
+  }
+  return 'custom';
+};
 
 export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
   settings,
@@ -17,11 +37,37 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const formatManuallyEdited = useRef(false);
 
   useEffect(() => {
-    setQuality(settings.quality);
+    const matchingQuality = getQualityFromFormat(settings.format);
+    setQuality(matchingQuality);
     setFormat(settings.format);
+    formatManuallyEdited.current = (matchingQuality === 'custom');
   }, [settings]);
+
+  // When quality changes, update format field (unless it was manually edited)
+  const handleQualityChange = (newQuality: string) => {
+    setQuality(newQuality);
+    if (!formatManuallyEdited.current && newQuality !== 'custom') {
+      setFormat(QUALITY_FORMAT_MAP[newQuality] || newQuality);
+    }
+  };
+
+  // When format changes manually, check if it matches a preset or mark as custom
+  const handleFormatChange = (newFormat: string) => {
+    setFormat(newFormat);
+    formatManuallyEdited.current = true;
+    
+    // Check if the new format matches a preset
+    const matchingQuality = getQualityFromFormat(newFormat);
+    if (matchingQuality !== 'custom') {
+      setQuality(matchingQuality);
+      formatManuallyEdited.current = false;
+    } else {
+      setQuality('custom');
+    }
+  };
 
   const handleSave = async () => {
     setError(null);
@@ -31,6 +77,7 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
     try {
       await onUpdate({ quality, format });
       setSuccess('Settings updated successfully');
+      formatManuallyEdited.current = false;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update settings');
     } finally {
@@ -40,15 +87,13 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
 
   return (
     <div className="download-settings">
-      <h3>Download Settings</h3>
-      
       <div className="settings-form">
         <div className="form-group">
           <label htmlFor="default-quality">Default Quality</label>
           <select
             id="default-quality"
             value={quality}
-            onChange={(e) => setQuality(e.target.value)}
+            onChange={(e) => handleQualityChange(e.target.value)}
             disabled={isSaving || isLoading}
           >
             <option value="best">Best Available</option>
@@ -56,6 +101,7 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
             <option value="worst">Worst Available</option>
             <option value="bestvideo">Best Video Only</option>
             <option value="bestaudio">Best Audio Only</option>
+            <option value="custom">Custom Format</option>
           </select>
         </div>
 
@@ -65,11 +111,15 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
             id="default-format"
             type="text"
             value={format}
-            onChange={(e) => setFormat(e.target.value)}
+            onChange={(e) => handleFormatChange(e.target.value)}
             placeholder="bestvideo+bestaudio"
             disabled={isSaving || isLoading}
           />
-          <small>Format string used for subscription downloads (e.g., &quot;bestvideo[height&lt;=1080]+bestaudio&quot;)</small>
+          <small>
+            {quality === 'custom' 
+              ? 'Custom format string (e.g., "bestvideo[height<=1080]+bestaudio")'
+              : 'Format string used for subscription downloads. Edit to use custom format.'}
+          </small>
         </div>
 
         {error && <div className="error-message">{error}</div>}

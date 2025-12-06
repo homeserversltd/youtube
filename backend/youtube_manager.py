@@ -204,7 +204,7 @@ class YoutubeManager:
                 'error': str(e)
             }
     
-    def download_channel_videos(self, channel_url: str, quality: str = "best", format_pref: Optional[str] = None) -> Dict[str, Any]:
+    def download_channel_videos(self, channel_url: str, quality: str = "best", format_pref: Optional[str] = None, audio_only: bool = False) -> Dict[str, Any]:
         """
         Download new videos from a channel URL.
         
@@ -212,6 +212,7 @@ class YoutubeManager:
             channel_url: YouTube channel URL
             quality: Quality preference
             format_pref: Format preference string
+            audio_only: Whether to download audio only
             
         Returns:
             Dictionary with download results
@@ -233,12 +234,22 @@ class YoutubeManager:
             
             ydl_opts = {
                 'outtmpl': output_template,
-                'format': format_pref or quality,
                 'download_archive': str(self.archive_file),
                 'quiet': False,
                 'no_warnings': False,
                 'ignoreerrors': True,  # Continue on errors
             }
+            
+            # Set format based on audio_only flag
+            if audio_only:
+                ydl_opts['format'] = 'bestaudio/best'
+                ydl_opts['postprocessors'] = [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '0',  # Best quality
+                }]
+            else:
+                ydl_opts['format'] = format_pref or quality
             
             downloaded_count = 0
             errors = []

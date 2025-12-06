@@ -5,6 +5,7 @@ interface SubscriptionListProps {
   subscriptions: YoutubeSubscription[];
   onAdd: (url: string, name?: string, audioOnly?: boolean) => Promise<void>;
   onRemove: (channelId: string) => Promise<void>;
+  onFetch: (channelId: string) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -12,6 +13,7 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
   subscriptions,
   onAdd,
   onRemove,
+  onFetch,
   isLoading = false
 }) => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -20,6 +22,7 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
   const [audioOnly, setAudioOnly] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [fetchingIds, setFetchingIds] = useState<Set<string>>(new Set());
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +56,25 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
       await onRemove(channelId);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to remove subscription');
+    }
+  };
+
+  const handleFetch = async (channelId: string) => {
+    if (fetchingIds.has(channelId)) {
+      return; // Already fetching
+    }
+
+    setFetchingIds(prev => new Set(prev).add(channelId));
+    try {
+      await onFetch(channelId);
+    } catch (err) {
+      // Error already handled in parent component
+    } finally {
+      setFetchingIds(prev => {
+        const next = new Set(prev);
+        next.delete(channelId);
+        return next;
+      });
     }
   };
 
@@ -136,13 +158,22 @@ export const SubscriptionList: React.FC<SubscriptionListProps> = ({
                 )}
                 <p className="subscription-date">Added: {new Date(sub.added_at).toLocaleDateString()}</p>
               </div>
-              <button
-                onClick={() => handleRemove(sub.id)}
-                disabled={isLoading}
-                className="remove-button"
-              >
-                Remove
-              </button>
+              <div className="subscription-actions">
+                <button
+                  onClick={() => handleFetch(sub.id)}
+                  disabled={isLoading || fetchingIds.has(sub.id)}
+                  className="fetch-button"
+                >
+                  {fetchingIds.has(sub.id) ? 'Fetching...' : 'Fetch Now'}
+                </button>
+                <button
+                  onClick={() => handleRemove(sub.id)}
+                  disabled={isLoading}
+                  className="remove-button"
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           ))}
         </div>

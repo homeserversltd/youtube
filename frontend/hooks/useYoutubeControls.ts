@@ -5,13 +5,15 @@ import {
   YoutubeSchedule,
   VideoInfo,
   DownloadResult,
+  ChannelDownloadResult,
   SubscriptionsResponse,
   SubscriptionResponse,
   SettingsResponse,
   ScheduleResponse,
   DownloadResponse,
   VideoInfoResponse,
-  LogsResponse
+  LogsResponse,
+  FetchSubscriptionResponse
 } from '../types';
 
 export const useYoutubeControls = () => {
@@ -274,12 +276,35 @@ export const useYoutubeControls = () => {
     }
   }, []);
 
+  const fetchSubscription = useCallback(async (channelId: string): Promise<ChannelDownloadResult> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/youtube/subscriptions/${encodeURIComponent(channelId)}/fetch`, {
+        method: 'POST',
+      });
+      
+      const data: FetchSubscriptionResponse = await response.json();
+      
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to fetch subscription');
+      }
+      
+      setIsLoading(false);
+      return data.data || { success: false, downloaded_count: 0, channel: '', path: '', error: 'No data returned' };
+    } catch (err) {
+      handleError(err);
+      throw err;
+    }
+  }, []);
+
   return {
     downloadVideo,
     getVideoInfo,
     getSubscriptions,
     addSubscription,
     removeSubscription,
+    fetchSubscription,
     getSettings,
     updateSettings,
     getSchedule,

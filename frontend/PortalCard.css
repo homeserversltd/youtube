@@ -143,6 +143,84 @@
   margin-top: 4px;
 }
 
+/* Modifiers Row */
+.modifiers-label {
+  font-size: 0.9rem;
+  color: var(--secondary);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.modifiers-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.modifier-button {
+  background: var(--hiddenTabBackground);
+  border: 1px solid var(--border);
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 120px;
+  text-align: left;
+  font-family: inherit;
+}
+
+.modifier-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modifier-button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--background);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.modifier-button.active:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.modifier-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.modifier-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: inherit;
+}
+
+.modifier-button.active .modifier-label {
+  color: var(--background);
+  font-weight: 600;
+}
+
+.modifier-description {
+  font-size: 0.8rem;
+  color: var(--secondary);
+  opacity: 0.8;
+}
+
+.modifier-button.active .modifier-description {
+  color: var(--background);
+  opacity: 0.9;
+}
+
 .download-button {
   background: var(--secondary);
   color: var(--background);
@@ -304,6 +382,42 @@
   font-size: 0.8rem;
 }
 
+.subscription-audio-only {
+  margin: 4px 0;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.subscription-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.fetch-button {
+  background: var(--accent);
+  color: var(--background);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.fetch-button:hover:not(:disabled) {
+  background: var(--primaryHover);
+  opacity: 0.9;
+}
+
+.fetch-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .remove-button {
   background: var(--error);
   color: var(--background);
@@ -314,7 +428,7 @@
   cursor: pointer;
   transition: background 0.2s ease;
   font-size: 0.9rem;
-  align-self: flex-start;
+  flex: 1;
 }
 
 .remove-button:hover:not(:disabled) {
@@ -337,6 +451,18 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.schedule-controls-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.schedule-controls-row .form-group {
+  flex: 1;
+  min-width: 200px;
 }
 
 .time-selectors {
@@ -541,18 +667,43 @@
     font-size: 0.75rem;
   }
 
+  /* Modifiers Row */
+  .modifiers-row {
+    gap: 6px;
+  }
+
+  .modifier-button {
+    padding: 12px 14px;
+    min-width: 100px;
+    min-height: 60px;
+  }
+
+  .modifier-label {
+    font-size: 0.9rem;
+  }
+
+  .modifier-description {
+    font-size: 0.75rem;
+  }
+
   /* Buttons */
   .download-button,
   .submit-button,
   .save-button,
   .add-button,
   .remove-button,
+  .fetch-button,
   .refresh-logs-button {
     padding: 12px 20px;
     font-size: 1rem;
     min-height: 44px;
     width: 100%;
     align-self: stretch;
+  }
+
+  .subscription-actions {
+    flex-direction: column;
+    gap: 8px;
   }
 
   /* Subscription List */
@@ -600,6 +751,16 @@
   }
 
   /* Schedule Config */
+  .schedule-controls-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .schedule-controls-row .form-group {
+    width: 100%;
+    min-width: unset;
+  }
+
   .time-selectors {
     flex-direction: column;
     gap: 12px;
@@ -705,12 +866,33 @@
     font-size: 0.7rem;
   }
 
+  /* Modifiers Row */
+  .modifiers-row {
+    gap: 6px;
+  }
+
+  .modifier-button {
+    padding: 10px 12px;
+    min-width: 90px;
+    min-height: 56px;
+    flex: 1 1 calc(50% - 3px);
+  }
+
+  .modifier-label {
+    font-size: 0.85rem;
+  }
+
+  .modifier-description {
+    font-size: 0.7rem;
+  }
+
   /* Buttons */
   .download-button,
   .submit-button,
   .save-button,
   .add-button,
   .remove-button,
+  .fetch-button,
   .refresh-logs-button {
     padding: 10px 16px;
     font-size: 0.95rem;
@@ -812,11 +994,20 @@
   .save-button:hover:not(:disabled),
   .add-button:hover:not(:disabled),
   .remove-button:hover:not(:disabled),
+  .fetch-button:hover:not(:disabled),
   .refresh-logs-button:hover:not(:disabled) {
     opacity: 0.9;
   }
 
   .subscription-card:hover {
+    transform: none;
+  }
+
+  .modifier-button:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .modifier-button.active:hover:not(:disabled) {
     transform: none;
   }
 }

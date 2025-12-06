@@ -185,6 +185,62 @@ def remove_subscription(channel_id):
         }), 500
 
 
+@bp.route('/subscriptions/<channel_id>/fetch', methods=['POST'])
+def fetch_subscription(channel_id):
+    """Fetch/download videos for a specific subscription."""
+    try:
+        # Get the subscription to find its URL and settings
+        subscriptions = subscription_manager.get_subscriptions()
+        subscription = None
+        
+        for sub in subscriptions:
+            if sub.get('id') == channel_id:
+                subscription = sub
+                break
+        
+        if not subscription:
+            return jsonify({
+                'success': False,
+                'error': 'Subscription not found'
+            }), 404
+        
+        # Get subscription URL and audio_only setting
+        channel_url = subscription.get('url')
+        audio_only = subscription.get('audio_only', False)
+        
+        # Get global settings for quality/format
+        settings = subscription_manager.get_settings()
+        quality = settings.get('quality', 'best')
+        format_pref = settings.get('format')
+        
+        # Download videos for this channel
+        result = youtube_manager.download_channel_videos(
+            channel_url,
+            quality,
+            format_pref,
+            audio_only
+        )
+        
+        if result.get('success'):
+            return jsonify({
+                'success': True,
+                'message': f"Download started for {subscription.get('name', 'channel')}",
+                'data': result
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': result.get('error', 'Download failed')
+            }), 500
+            
+    except Exception as e:
+        current_app.logger.error(f"Error fetching subscription: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
 @bp.route('/settings', methods=['GET'])
 def get_settings():
     """Get download settings."""

@@ -51,22 +51,20 @@ export const ScheduleConfig: React.FC<ScheduleConfigProps> = ({
 
   return (
     <div className="schedule-config">
-      <h3>Subscription Check Schedule</h3>
-      
       <div className="schedule-controls">
-        <div className="form-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={enabled}
-              onChange={(e) => setEnabled(e.target.checked)}
-              disabled={isSaving || isLoading}
-            />
-            Enable automatic subscription checks
-          </label>
-        </div>
+        <div className="schedule-controls-row">
+          <div className="form-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={enabled}
+                onChange={(e) => setEnabled(e.target.checked)}
+                disabled={isSaving || isLoading}
+              />
+              Enable automatic subscription checks
+            </label>
+          </div>
 
-        <div className="time-selectors">
           <div className="form-group">
             <label htmlFor="schedule-hour">Check Hour</label>
             <select

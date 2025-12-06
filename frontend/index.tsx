@@ -16,6 +16,7 @@ const YoutubeTablet: React.FC = () => {
     getSubscriptions,
     addSubscription,
     removeSubscription,
+    fetchSubscription,
     getSettings,
     updateSettings,
     getSchedule,
@@ -73,6 +74,19 @@ const YoutubeTablet: React.FC = () => {
   const handleRemoveSubscription = async (channelId: string) => {
     await removeSubscription(channelId);
     await loadSubscriptions();
+  };
+
+  const handleFetchSubscription = async (channelId: string) => {
+    try {
+      const result = await fetchSubscription(channelId);
+      if (result.success) {
+        alert(`Download started! ${result.downloaded_count} video(s) will be downloaded.`);
+      } else {
+        alert(`Failed to start download: ${result.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to fetch subscription');
+    }
   };
 
   const handleUpdateSettings = async (newSettings: Partial<YoutubeSettings>) => {
@@ -159,6 +173,7 @@ const YoutubeTablet: React.FC = () => {
               subscriptions={subscriptions}
               onAdd={handleAddSubscription}
               onRemove={handleRemoveSubscription}
+              onFetch={handleFetchSubscription}
               isLoading={isLoading}
             />
           </div>

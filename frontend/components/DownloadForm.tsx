@@ -16,6 +16,31 @@ export const DownloadForm: React.FC<DownloadFormProps> = ({
   const [success, setSuccess] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
+  const modifiers = [
+    {
+      id: 'audio-only',
+      label: 'Audio Only',
+      description: 'Download as MP3',
+      active: audioOnly,
+      toggle: () => setAudioOnly(!audioOnly)
+    }
+    // Future modifiers can be added here:
+    // {
+    //   id: 'high-quality',
+    //   label: 'High Quality',
+    //   description: 'Best available quality',
+    //   active: highQuality,
+    //   toggle: () => setHighQuality(!highQuality)
+    // },
+    // {
+    //   id: 'subtitles',
+    //   label: 'Subtitles',
+    //   description: 'Download captions',
+    //   active: includeSubtitles,
+    //   toggle: () => setIncludeSubtitles(!includeSubtitles)
+    // },
+  ];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -45,7 +70,6 @@ export const DownloadForm: React.FC<DownloadFormProps> = ({
 
   return (
     <div className="download-form">
-      <h3>Download Video</h3>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="youtube-url">YouTube URL</label>
@@ -60,16 +84,23 @@ export const DownloadForm: React.FC<DownloadFormProps> = ({
         </div>
 
         <div className="form-group">
-          <label htmlFor="download-audio-only">
-            <input
-              id="download-audio-only"
-              type="checkbox"
-              checked={audioOnly}
-              onChange={(e) => setAudioOnly(e.target.checked)}
-              disabled={isDownloading || isLoading}
-            />
-            <span>Audio only (download as MP3)</span>
-          </label>
+          <div className="modifiers-row">
+            {modifiers.map((modifier) => (
+              <button
+                key={modifier.id}
+                type="button"
+                className={`modifier-button ${modifier.active ? 'active' : ''}`}
+                onClick={modifier.toggle}
+                disabled={isDownloading || isLoading}
+                title={modifier.description}
+              >
+                <span className="modifier-label">{modifier.label}</span>
+                {modifier.description && (
+                  <span className="modifier-description">{modifier.description}</span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
 
         {error && <div className="error-message">{error}</div>}

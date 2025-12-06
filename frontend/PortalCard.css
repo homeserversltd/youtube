@@ -1,0 +1,823 @@
+/* YouTube Premium Tab CSS */
+
+.youtube-tablet {
+  padding: 24px;
+  background: var(--background);
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.youtube-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  background: var(--hiddenTabBackground);
+  border: 1px solid var(--border);
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--secondary);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tab-button:hover:not(:disabled) {
+  color: var(--accent);
+  background: var(--primary);
+  border-color: var(--accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.tab-button.active {
+  color: var(--background);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+}
+
+.tab-button.active:hover:not(:disabled) {
+  background: var(--accent);
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.tab-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-banner {
+  background: var(--error);
+  color: var(--background);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid var(--error);
+  opacity: 0.9;
+}
+
+.youtube-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.youtube-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.youtube-section {
+  background: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.youtube-section h3 {
+  margin: 0 0 20px 0;
+  color: var(--text);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Download Form */
+.download-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: var(--secondary);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: var(--background);
+  color: var(--text);
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb, 0, 123, 255), 0.2);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-group small {
+  font-size: 0.8rem;
+  color: var(--secondary);
+  margin-top: 4px;
+}
+
+.download-button {
+  background: var(--secondary);
+  color: var(--background);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  align-self: flex-start;
+}
+
+.download-button:hover:not(:disabled) {
+  background: var(--primaryHover);
+}
+
+.download-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background: var(--error);
+  color: var(--background);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+.success-message {
+  background: var(--success);
+  color: var(--background);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* Subscription List */
+.subscription-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.subscription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.add-button {
+  background: var(--secondary);
+  color: var(--background);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.add-button:hover:not(:disabled) {
+  background: var(--primaryHover);
+}
+
+.add-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.add-subscription-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: var(--hiddenTabBackground);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  border-left: 4px solid var(--accent);
+}
+
+.submit-button {
+  background: var(--secondary);
+  color: var(--background);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  align-self: flex-start;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: var(--primaryHover);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.no-subscriptions {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--secondary);
+  font-size: 1.1rem;
+}
+
+.subscriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.subscription-card {
+  background: var(--hiddenTabBackground);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.subscription-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.subscription-info {
+  flex: 1;
+}
+
+.subscription-info h4 {
+  margin: 0 0 8px 0;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.subscription-url {
+  margin: 0 0 8px 0;
+  color: var(--secondary);
+  font-size: 0.85rem;
+  word-break: break-all;
+  font-family: 'Courier New', monospace;
+}
+
+.subscription-date {
+  margin: 0;
+  color: var(--secondary);
+  font-size: 0.8rem;
+}
+
+.remove-button {
+  background: var(--error);
+  color: var(--background);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 0.9rem;
+  align-self: flex-start;
+}
+
+.remove-button:hover:not(:disabled) {
+  background: var(--primaryHover);
+}
+
+.remove-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Schedule Config */
+.schedule-config {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.schedule-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.time-selectors {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.schedule-preview {
+  padding: 12px;
+  background: var(--hiddenTabBackground);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.schedule-preview strong {
+  color: var(--accent);
+}
+
+.save-button {
+  background: var(--secondary);
+  color: var(--background);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  align-self: flex-start;
+}
+
+.save-button:hover:not(:disabled) {
+  background: var(--primaryHover);
+}
+
+.save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Download Settings */
+.download-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Logs View */
+.logs-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.logs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.logs-header h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.refresh-logs-button {
+  background: var(--secondary);
+  color: var(--background);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.refresh-logs-button:hover:not(:disabled) {
+  background: var(--primaryHover);
+}
+
+.refresh-logs-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.logs-content {
+  background: var(--hiddenTabBackground);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  max-height: 600px;
+  overflow: auto;
+}
+
+.logs-text {
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Responsive Design - Tablet and below */
+@media (max-width: 768px) {
+  .youtube-tablet {
+    padding: 12px;
+    min-height: auto;
+  }
+
+  .youtube-tabs {
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+  }
+
+  .youtube-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-button {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    min-width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    border-width: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tab-button.active {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    font-weight: 600;
+  }
+
+  .youtube-content {
+    gap: 16px;
+    max-width: 100%;
+  }
+
+  .youtube-section {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .youtube-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+  }
+
+  .youtube-sections {
+    gap: 16px;
+  }
+
+  .error-banner {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+
+  /* Forms */
+  .form-group {
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px 14px;
+    font-size: 1rem;
+    min-height: 44px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .form-group small {
+    font-size: 0.75rem;
+  }
+
+  /* Buttons */
+  .download-button,
+  .submit-button,
+  .save-button,
+  .add-button,
+  .remove-button,
+  .refresh-logs-button {
+    padding: 12px 20px;
+    font-size: 1rem;
+    min-height: 44px;
+    width: 100%;
+    align-self: stretch;
+  }
+
+  /* Subscription List */
+  .subscription-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .subscription-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .add-button {
+    width: 100%;
+  }
+
+  .subscriptions-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .subscription-card {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .subscription-info h4 {
+    font-size: 1rem;
+  }
+
+  .subscription-url {
+    font-size: 0.8rem;
+  }
+
+  .subscription-date {
+    font-size: 0.75rem;
+  }
+
+  .add-subscription-form {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  /* Schedule Config */
+  .time-selectors {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .time-selectors .form-group {
+    width: 100%;
+  }
+
+  .schedule-preview {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  /* Logs View */
+  .logs-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .logs-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .refresh-logs-button {
+    width: 100%;
+  }
+
+  .logs-content {
+    padding: 12px;
+    max-height: 500px;
+    border-radius: 6px;
+  }
+
+  .logs-text {
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+}
+
+/* Responsive Design - Small Mobile */
+@media (max-width: 480px) {
+  .youtube-tablet {
+    padding: 8px;
+  }
+
+  .youtube-tabs {
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+
+  .tab-button {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    min-height: 40px;
+    border-width: 1.5px;
+  }
+
+  .youtube-section {
+    padding: 12px;
+    border-radius: 6px;
+  }
+
+  .youtube-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  .youtube-content {
+    gap: 12px;
+  }
+
+  .youtube-sections {
+    gap: 12px;
+  }
+
+  .error-banner {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+
+  /* Forms */
+  .form-group {
+    gap: 5px;
+  }
+
+  .form-group label {
+    font-size: 0.8rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    min-height: 44px;
+  }
+
+  .form-group small {
+    font-size: 0.7rem;
+  }
+
+  /* Buttons */
+  .download-button,
+  .submit-button,
+  .save-button,
+  .add-button,
+  .remove-button,
+  .refresh-logs-button {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    min-height: 44px;
+  }
+
+  /* Subscription List */
+  .subscription-header {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .subscription-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .subscriptions-grid {
+    gap: 10px;
+  }
+
+  .subscription-card {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .subscription-info h4 {
+    font-size: 0.95rem;
+  }
+
+  .subscription-url {
+    font-size: 0.75rem;
+  }
+
+  .subscription-date {
+    font-size: 0.7rem;
+  }
+
+  .add-subscription-form {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .no-subscriptions {
+    padding: 32px 16px;
+    font-size: 1rem;
+  }
+
+  /* Schedule Config */
+  .time-selectors {
+    gap: 10px;
+  }
+
+  .schedule-preview {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  /* Logs View */
+  .logs-header {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .logs-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .logs-content {
+    padding: 10px;
+    max-height: 400px;
+  }
+
+  .logs-text {
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  /* Messages */
+  .error-message,
+  .success-message {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    margin-top: 6px;
+  }
+}
+
+/* Touch-friendly improvements for all mobile */
+@media (hover: none) and (pointer: coarse) {
+  .tab-button:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .tab-button.active:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .download-button:hover:not(:disabled),
+  .submit-button:hover:not(:disabled),
+  .save-button:hover:not(:disabled),
+  .add-button:hover:not(:disabled),
+  .remove-button:hover:not(:disabled),
+  .refresh-logs-button:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  .subscription-card:hover {
+    transform: none;
+  }
+}
+

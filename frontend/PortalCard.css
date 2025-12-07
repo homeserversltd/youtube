@@ -469,6 +469,75 @@
   min-width: 200px;
 }
 
+/* Toggle Switch Checkbox - Matching Modifier Button Style */
+.schedule-controls .form-group label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.schedule-controls .form-group input[type="checkbox"] {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  appearance: none;
+  background: var(--hiddenTabBackground);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-controls .form-group input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--background);
+  top: 2px;
+  left: 2px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.schedule-controls .form-group input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.schedule-controls .form-group input[type="checkbox"]:checked::before {
+  left: calc(100% - 20px);
+  background: var(--background);
+}
+
+.schedule-controls .form-group input[type="checkbox"]:hover:not(:disabled) {
+  border-color: var(--accent);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-controls .form-group input[type="checkbox"]:checked:hover:not(:disabled) {
+  opacity: 0.9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.schedule-controls .form-group input[type="checkbox"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.schedule-controls .form-group label span {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
 .time-selectors {
   display: flex;
   gap: 16px;
@@ -797,6 +866,28 @@
     font-size: 0.9rem;
   }
 
+  /* Toggle Switch - Mobile */
+  .schedule-controls .form-group input[type="checkbox"] {
+    width: 52px;
+    height: 28px;
+    min-height: 44px;
+  }
+
+  .schedule-controls .form-group input[type="checkbox"]::before {
+    width: 22px;
+    height: 22px;
+    top: 3px;
+    left: 3px;
+  }
+
+  .schedule-controls .form-group input[type="checkbox"]:checked::before {
+    left: calc(100% - 25px);
+  }
+
+  .schedule-controls .form-group label span {
+    font-size: 0.9rem;
+  }
+
   /* Logs View */
   .logs-header {
     flex-direction: column;
@@ -970,6 +1061,27 @@
 
   .schedule-preview {
     padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  /* Toggle Switch - Small Mobile */
+  .schedule-controls .form-group input[type="checkbox"] {
+    width: 48px;
+    height: 26px;
+  }
+
+  .schedule-controls .form-group input[type="checkbox"]::before {
+    width: 20px;
+    height: 20px;
+    top: 3px;
+    left: 3px;
+  }
+
+  .schedule-controls .form-group input[type="checkbox"]:checked::before {
+    left: calc(100% - 23px);
+  }
+
+  .schedule-controls .form-group label span {
     font-size: 0.85rem;
   }
 

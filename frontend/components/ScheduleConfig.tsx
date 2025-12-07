@@ -61,7 +61,7 @@ export const ScheduleConfig: React.FC<ScheduleConfigProps> = ({
                 onChange={(e) => setEnabled(e.target.checked)}
                 disabled={isSaving || isLoading}
               />
-              Enable automatic subscription checks
+              <span>Enable automatic subscription checks</span>
             </label>
           </div>
 

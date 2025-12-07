@@ -289,6 +289,9 @@ SUBSCRIPTIONS_FILE="{self.subscriptions_file}"
 SETTINGS_FILE="{self.settings_file}"
 DOWNLOAD_DIR="/mnt/nas/youtube"
 
+# Ensure download directory exists
+mkdir -p "$DOWNLOAD_DIR"
+
 # Source settings
 if [ -f "$SETTINGS_FILE" ]; then
     QUALITY=$(jq -r '.quality // "best"' "$SETTINGS_FILE")

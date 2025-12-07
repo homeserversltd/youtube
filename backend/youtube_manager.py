@@ -40,6 +40,18 @@ class YoutubeManager:
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.log_file.parent.mkdir(parents=True, exist_ok=True)
     
+    def _ensure_download_dir(self) -> None:
+        """Ensure the download directory exists using mkdir -p command."""
+        try:
+            subprocess.run(
+                ['mkdir', '-p', str(self.DOWNLOAD_DIR)],
+                check=True,
+                timeout=10
+            )
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+            # Log error but don't fail - Path.mkdir will handle it if needed
+            pass
+    
     def _validate_url(self, url: str) -> bool:
         """Validate that URL is a valid YouTube URL."""
         if not url:
@@ -107,6 +119,9 @@ class YoutubeManager:
         
         if yt_dlp is None:
             raise RuntimeError("yt-dlp is not installed")
+        
+        # Ensure download directory exists before proceeding
+        self._ensure_download_dir()
         
         try:
             # Get channel name for organization
@@ -222,6 +237,9 @@ class YoutubeManager:
         
         if yt_dlp is None:
             raise RuntimeError("yt-dlp is not installed")
+        
+        # Ensure download directory exists before proceeding
+        self._ensure_download_dir()
         
         try:
             # Get channel name

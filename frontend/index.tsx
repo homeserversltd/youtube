@@ -28,7 +28,7 @@ const YoutubeTablet: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<TabType>('download');
   const [subscriptions, setSubscriptions] = useState<YoutubeSubscription[]>([]);
-  const [settings, setSettings] = useState<YoutubeSettings>({ quality: 'best', format: 'bestvideo+bestaudio' });
+  const [settings, setSettings] = useState<YoutubeSettings>({ quality: 'best', format: 'bestvideo+bestaudio', auto_hardlink: false });
   const [schedule, setSchedule] = useState<YoutubeSchedule>({ enabled: false, hour: 2, minute: 0 });
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const YoutubeTablet: React.FC = () => {
   const loadConfig = async () => {
     try {
       const [settingsData, scheduleData] = await Promise.all([
-        getSettings().catch(() => ({ quality: 'best', format: 'bestvideo+bestaudio' })),
+        getSettings().catch(() => ({ quality: 'best', format: 'bestvideo+bestaudio', auto_hardlink: false })),
         getSchedule().catch(() => ({ enabled: false, hour: 2, minute: 0 }))
       ]);
       setSettings(settingsData);

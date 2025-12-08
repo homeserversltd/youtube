@@ -452,8 +452,6 @@
   flex-direction: column;
   gap: 20px;
   padding: 20px;
-  background: var(--hiddenTabBackground);
-  border: 1px solid var(--border);
   border-radius: 8px;
 }
 
@@ -602,6 +600,70 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+/* Toggle Switch Checkbox for Download Settings */
+.download-settings .form-group label[for="auto-hardlink"] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.download-settings .form-group input[type="checkbox"]#auto-hardlink {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  appearance: none;
+  background: var(--hiddenTabBackground);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin: 0;
+}
+
+.download-settings .form-group input[type="checkbox"]#auto-hardlink::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--background);
+  top: 2px;
+  left: 2px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.download-settings .form-group input[type="checkbox"]#auto-hardlink:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.download-settings .form-group input[type="checkbox"]#auto-hardlink:checked::before {
+  left: calc(100% - 20px);
+  background: var(--background);
+}
+
+.download-settings .form-group input[type="checkbox"]#auto-hardlink:hover:not(:disabled) {
+  border-color: var(--accent);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.download-settings .form-group input[type="checkbox"]#auto-hardlink:checked:hover:not(:disabled) {
+  opacity: 0.9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.download-settings .form-group input[type="checkbox"]#auto-hardlink:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Logs View */
@@ -888,6 +950,22 @@
     font-size: 0.9rem;
   }
 
+  .download-settings .form-group input[type="checkbox"]#auto-hardlink {
+    width: 52px;
+    height: 28px;
+  }
+
+  .download-settings .form-group input[type="checkbox"]#auto-hardlink::before {
+    width: 22px;
+    height: 22px;
+    top: 3px;
+    left: 3px;
+  }
+
+  .download-settings .form-group input[type="checkbox"]#auto-hardlink:checked::before {
+    left: calc(100% - 25px);
+  }
+
   /* Logs View */
   .logs-header {
     flex-direction: column;
@@ -1083,6 +1161,22 @@
 
   .schedule-controls .form-group label span {
     font-size: 0.85rem;
+  }
+
+  .download-settings .form-group input[type="checkbox"]#auto-hardlink {
+    width: 48px;
+    height: 26px;
+  }
+
+  .download-settings .form-group input[type="checkbox"]#auto-hardlink::before {
+    width: 20px;
+    height: 20px;
+    top: 3px;
+    left: 3px;
+  }
+
+  .download-settings .form-group input[type="checkbox"]#auto-hardlink:checked::before {
+    left: calc(100% - 23px);
   }
 
   /* Logs View */

@@ -34,6 +34,7 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
 }) => {
   const [quality, setQuality] = useState(settings.quality);
   const [format, setFormat] = useState(settings.format);
+  const [autoHardlink, setAutoHardlink] = useState(settings.auto_hardlink ?? false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -43,6 +44,7 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
     const matchingQuality = getQualityFromFormat(settings.format);
     setQuality(matchingQuality);
     setFormat(settings.format);
+    setAutoHardlink(settings.auto_hardlink ?? false);
     formatManuallyEdited.current = (matchingQuality === 'custom');
   }, [settings]);
 
@@ -75,7 +77,7 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
 
     setIsSaving(true);
     try {
-      await onUpdate({ quality, format });
+      await onUpdate({ quality, format, auto_hardlink: autoHardlink });
       setSuccess('Settings updated successfully');
       formatManuallyEdited.current = false;
     } catch (err) {
@@ -119,6 +121,22 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
             {quality === 'custom' 
               ? 'Custom format string (e.g., "bestvideo[height<=1080]+bestaudio")'
               : 'Format string used for subscription downloads. Edit to use custom format.'}
+          </small>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="auto-hardlink" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <input
+              id="auto-hardlink"
+              type="checkbox"
+              checked={autoHardlink}
+              onChange={(e) => setAutoHardlink(e.target.checked)}
+              disabled={isSaving || isLoading}
+            />
+            <span>Auto-hardlink to /mnt/nas/media/YouTube</span>
+          </label>
+          <small>
+            Automatically create hardlinks in /mnt/nas/media/YouTube after downloads complete
           </small>
         </div>
 

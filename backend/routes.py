@@ -40,7 +40,11 @@ def download_video():
         format_pref = data.get('format')
         audio_only = data.get('audio_only', False)
         
-        result = youtube_manager.download_video(url, quality, format_pref, audio_only)
+        # Get auto_hardlink setting
+        settings = subscription_manager.get_settings()
+        auto_hardlink = settings.get('auto_hardlink', False)
+        
+        result = youtube_manager.download_video(url, quality, format_pref, audio_only, auto_hardlink)
         
         if result.get('success'):
             return jsonify({
@@ -208,17 +212,19 @@ def fetch_subscription(channel_id):
         channel_url = subscription.get('url')
         audio_only = subscription.get('audio_only', False)
         
-        # Get global settings for quality/format
+        # Get global settings for quality/format and auto_hardlink
         settings = subscription_manager.get_settings()
         quality = settings.get('quality', 'best')
         format_pref = settings.get('format')
+        auto_hardlink = settings.get('auto_hardlink', False)
         
         # Download videos for this channel
         result = youtube_manager.download_channel_videos(
             channel_url,
             quality,
             format_pref,
-            audio_only
+            audio_only,
+            auto_hardlink
         )
         
         if result.get('success'):

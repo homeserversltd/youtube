@@ -9,6 +9,8 @@ import os
 import json
 import subprocess
 import re
+import sys
+import importlib.util
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from urllib.parse import urlparse, parse_qs
@@ -19,6 +21,44 @@ try:
 except ImportError:
     yt_dlp = None
 
+# Import linker core for hardlink functionality
+LINKER_BASE = Path('/usr/local/lib/linker')
+CORE_PATH = LINKER_BASE / 'core.py'
+LOGGER_UTILS_PATH = LINKER_BASE / 'logger_utils.py'
+PERMISSIONS_HELPER_PATH = LINKER_BASE / 'permissions_helper.py'
+CONFIG_PATH = LINKER_BASE / 'config.py'
+
+def load_module_from_path(module_name: str, file_path: Path):
+    """Load a module directly from a file path."""
+    if not file_path.exists():
+        raise ImportError(f"Module file not found: {file_path}")
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Failed to create spec for {file_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
+
+# Load linker modules
+try:
+    linker_path = str(LINKER_BASE)
+    if linker_path not in sys.path:
+        sys.path.insert(0, linker_path)
+    
+    config_module = load_module_from_path('config', CONFIG_PATH)
+    logger_utils_module = load_module_from_path('logger_utils', LOGGER_UTILS_PATH)
+    permissions_helper_module = load_module_from_path('permissions_helper', PERMISSIONS_HELPER_PATH)
+    core_module = load_module_from_path('core', CORE_PATH)
+    create_hardlink = core_module.create_hardlink
+    
+    if linker_path in sys.path:
+        sys.path.remove(linker_path)
+except Exception as e:
+    # If linker is not available, hardlinking will be disabled
+    create_hardlink = None
+    linker_error = str(e)
+
 
 class YoutubeManager:
     """Manages YouTube video downloading operations."""
@@ -27,6 +67,7 @@ class YoutubeManager:
     DATA_DIR = Path("/var/www/homeserver/data/youtube")
     ARCHIVE_FILE = DOWNLOAD_DIR / "downloaded.txt"
     LOG_FILE = Path("/var/www/homeserver/premium/youtube_logs.txt")
+    MEDIA_DIR = Path("/mnt/nas/media/YouTube")
     
     def __init__(self):
         """Initialize YouTube manager."""
@@ -34,11 +75,13 @@ class YoutubeManager:
         self.data_dir = self.DATA_DIR
         self.archive_file = self.ARCHIVE_FILE
         self.log_file = self.LOG_FILE
+        self.media_dir = self.MEDIA_DIR
         
         # Ensure directories exist
         self.download_dir.mkdir(parents=True, exist_ok=True)
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.log_file.parent.mkdir(parents=True, exist_ok=True)
+        # Media directory will be created when needed
     
     def _ensure_download_dir(self) -> None:
         """Ensure the download directory exists using mkdir -p command."""
@@ -101,7 +144,64 @@ class YoutubeManager:
         
         return "unknown_channel"
     
-    def download_video(self, url: str, quality: str = "best", format_pref: Optional[str] = None, audio_only: bool = False) -> Dict[str, Any]:
+    def _create_hardlink_to_media(self, source_file: Path) -> bool:
+        """
+        Create a hardlink from downloaded file to /mnt/nas/media/YouTube.
+        
+        Args:
+            source_file: Path to the downloaded video file
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        if create_hardlink is None:
+            return False
+        
+        try:
+            # Ensure media directory exists
+            self.media_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Create hardlink
+            success = create_hardlink(
+                source=source_file,
+                destination_dir=self.media_dir,
+                name=None,  # Use same filename
+                conflict_strategy='skip'  # Skip if already exists
+            )
+            return success
+        except Exception as e:
+            # Log error but don't fail the download
+            try:
+                with open(self.log_file, 'a', encoding='utf-8') as f:
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    f.write(f"[{timestamp}] Hardlink error: {str(e)}\n")
+            except Exception:
+                pass
+            return False
+    
+    def _find_downloaded_file(self, channel_dir: Path, video_title: str) -> Optional[Path]:
+        """
+        Find the actual downloaded file in the channel directory.
+        
+        Args:
+            channel_dir: Directory where video was downloaded
+            video_title: Title of the video (may be sanitized)
+            
+        Returns:
+            Path to the downloaded file, or None if not found
+        """
+        if not channel_dir.exists():
+            return None
+        
+        # Get most recently modified file in the directory
+        files = [f for f in channel_dir.iterdir() if f.is_file()]
+        if not files:
+            return None
+        
+        # Return the most recently modified file (should be the one just downloaded)
+        return max(files, key=lambda f: f.stat().st_mtime)
+    
+    def download_video(self, url: str, quality: str = "best", format_pref: Optional[str] = None, audio_only: bool = False, auto_hardlink: bool = False) -> Dict[str, Any]:
         """
         Download a video from YouTube URL.
         
@@ -155,14 +255,23 @@ class YoutubeManager:
                 info = ydl.extract_info(url, download=True)
                 
                 if info:
+                    video_title = info.get('title', 'Unknown')
                     result = {
                         'success': True,
-                        'title': info.get('title', 'Unknown'),
+                        'title': video_title,
                         'channel': info.get('uploader') or info.get('channel', channel_name),
                         'duration': info.get('duration', 0),
                         'filesize': info.get('filesize', 0),
                         'path': str(channel_dir)
                     }
+                    
+                    # Create hardlink if enabled
+                    if auto_hardlink:
+                        downloaded_file = self._find_downloaded_file(channel_dir, video_title)
+                        if downloaded_file:
+                            hardlink_success = self._create_hardlink_to_media(downloaded_file)
+                            result['hardlinked'] = hardlink_success
+                    
                     # Log successful download
                     self._log_download(url, result)
                     return result
@@ -219,7 +328,7 @@ class YoutubeManager:
                 'error': str(e)
             }
     
-    def download_channel_videos(self, channel_url: str, quality: str = "best", format_pref: Optional[str] = None, audio_only: bool = False) -> Dict[str, Any]:
+    def download_channel_videos(self, channel_url: str, quality: str = "best", format_pref: Optional[str] = None, audio_only: bool = False, auto_hardlink: bool = False) -> Dict[str, Any]:
         """
         Download new videos from a channel URL.
         
@@ -271,6 +380,7 @@ class YoutubeManager:
             
             downloaded_count = 0
             errors = []
+            hardlinked_count = 0
             
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 # Extract channel info
@@ -285,12 +395,32 @@ class YoutubeManager:
                     # Single video
                     downloaded_count = 1
             
-            return {
+            # Hardlink all files in channel directory if enabled
+            if auto_hardlink:
+                try:
+                    files = [f for f in channel_dir.iterdir() if f.is_file()]
+                    for file in files:
+                        if self._create_hardlink_to_media(file):
+                            hardlinked_count += 1
+                except Exception as e:
+                    # Log error but don't fail the download
+                    try:
+                        with open(self.log_file, 'a', encoding='utf-8') as f:
+                            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            f.write(f"[{timestamp}] Channel hardlink error: {str(e)}\n")
+                    except Exception:
+                        pass
+            
+            result = {
                 'success': True,
                 'downloaded_count': downloaded_count,
                 'channel': channel_name,
                 'path': str(channel_dir)
             }
+            if auto_hardlink:
+                result['hardlinked_count'] = hardlinked_count
+            
+            return result
                     
         except Exception as e:
             return {

@@ -11,6 +11,7 @@ export interface YoutubeSubscription {
 export interface YoutubeSettings {
   quality: string;
   format: string;
+  auto_hardlink?: boolean;
   updated_at?: string;
 }
 

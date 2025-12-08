@@ -170,6 +170,7 @@ class SubscriptionManager:
         return {
             'quality': 'best',
             'format': 'bestvideo+bestaudio',
+            'auto_hardlink': False,
             'updated_at': self._get_timestamp()
         }
     

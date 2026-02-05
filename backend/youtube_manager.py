@@ -5,6 +5,7 @@ Handles YouTube video downloading using yt-dlp, including manual downloads
 and subscription-based automatic downloads.
 """
 
+import logging
 import os
 import json
 import subprocess
@@ -77,12 +78,26 @@ class YoutubeManager:
         self.log_file = self.LOG_FILE
         self.media_dir = self.MEDIA_DIR
         
-        # Ensure directories exist
-        self.download_dir.mkdir(parents=True, exist_ok=True)
-        self.data_dir.mkdir(parents=True, exist_ok=True)
-        self.log_file.parent.mkdir(parents=True, exist_ok=True)
-        # Media directory will be created when needed
-    
+        # Ensure directories exist. Do not crash if NAS is unmounted or permissions missing
+        # (e.g. at gunicorn boot before vault/NAS is available); creation is retried on use.
+        self._ensure_init_dirs()
+
+    def _ensure_init_dirs(self) -> None:
+        """Create required directories. Log and continue on failure so worker can boot."""
+        log = logging.getLogger(__name__)
+        for label, path in [
+            ("download_dir", self.download_dir),
+            ("data_dir", self.data_dir),
+            ("log_file.parent", self.log_file.parent),
+        ]:
+            try:
+                path.mkdir(parents=True, exist_ok=True)
+            except OSError as e:
+                log.warning(
+                    "YouTube manager: could not create %s at %s: %s (will retry on use)",
+                    label, path, e,
+                )
+
     def _ensure_download_dir(self) -> None:
         """Ensure the download directory exists using mkdir -p command."""
         try:

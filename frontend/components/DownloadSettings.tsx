@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '../../../src/components/ui';
 import { YoutubeSettings } from '../types';
 
 interface DownloadSettingsProps {
@@ -164,7 +163,7 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
         {success && <div className="success-message">{success}</div>}
         {ytdlpMessage && <div className="success-message">{ytdlpMessage}</div>}
 
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem', flexWrap: 'wrap' }}>
           <button
             onClick={handleSave}
             disabled={isSaving || isLoading}
@@ -172,14 +171,13 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
           >
             {isSaving ? 'Saving...' : 'Save Settings'}
           </button>
-
-          <Button
-            variant="outline"
+          <button
             onClick={handleUpdateYtdlp}
             disabled={isUpdatingYtdlp || isLoading}
+            className="save-button"
           >
             {isUpdatingYtdlp ? 'Updating yt-dlp...' : 'Update yt-dlp'}
-          </Button>
+          </button>
         </div>
       </div>
     </div>

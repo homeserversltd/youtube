@@ -252,6 +252,7 @@ class YoutubeManager:
                 'download_archive': str(self.archive_file),
                 'quiet': False,
                 'no_warnings': False,
+                'ffmpeg_location': '/usr/bin',
             }
             
             # Set format based on audio_only flag
@@ -380,6 +381,7 @@ class YoutubeManager:
                 'quiet': False,
                 'no_warnings': False,
                 'ignoreerrors': True,  # Continue on errors
+                'ffmpeg_location': '/usr/bin',
             }
             
             # Set format based on audio_only flag

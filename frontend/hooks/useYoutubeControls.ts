@@ -13,7 +13,8 @@ import {
   DownloadResponse,
   VideoInfoResponse,
   LogsResponse,
-  FetchSubscriptionResponse
+  FetchSubscriptionResponse,
+  UpdateYtdlpResponse
 } from '../types';
 
 export const useYoutubeControls = () => {
@@ -283,15 +284,43 @@ export const useYoutubeControls = () => {
       const response = await fetch(`/api/youtube/subscriptions/${encodeURIComponent(channelId)}/fetch`, {
         method: 'POST',
       });
-      
+
       const data: FetchSubscriptionResponse = await response.json();
-      
+
       if (!response.ok || !data.success) {
         throw new Error(data.error || 'Failed to fetch subscription');
       }
-      
+
       setIsLoading(false);
       return data.data || { success: false, downloaded_count: 0, channel: '', path: '', error: 'No data returned' };
+    } catch (err) {
+      handleError(err);
+      throw err;
+    }
+  }, []);
+
+  const updateYtdlp = useCallback(async (): Promise<string> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      console.log('[UpdateYtdlp] Starting yt-dlp update');
+      const response = await fetch('/api/youtube/update-ytdlp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data: UpdateYtdlpResponse = await response.json();
+      console.log('[UpdateYtdlp] Response received', { status: response.status, ok: response.ok, success: data.success });
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to update yt-dlp');
+      }
+
+      console.log('[UpdateYtdlp] Success', data.message);
+      setIsLoading(false);
+      return data.message || 'yt-dlp updated successfully';
     } catch (err) {
       handleError(err);
       throw err;
@@ -305,6 +334,7 @@ export const useYoutubeControls = () => {
     addSubscription,
     removeSubscription,
     fetchSubscription,
+    updateYtdlp,
     getSettings,
     updateSettings,
     getSchedule,

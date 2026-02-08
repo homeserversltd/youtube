@@ -99,3 +99,9 @@ export interface FetchSubscriptionResponse {
   error?: string;
 }
 
+export interface UpdateYtdlpResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+

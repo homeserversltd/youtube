@@ -360,3 +360,55 @@ def get_logs():
             'error': str(e)
         }), 500
 
+
+@bp.route('/update-ytdlp', methods=['POST'])
+def update_ytdlp():
+    """Update yt-dlp package and restart gunicorn."""
+    try:
+        import subprocess
+
+        # Update yt-dlp
+        update_result = subprocess.run(
+            ['/usr/bin/sudo', '/var/www/homeserver/venv/bin/pip', 'install', '--upgrade', 'yt-dlp'],
+            capture_output=True,
+            text=True,
+            timeout=120
+        )
+
+        if update_result.returncode != 0:
+            return jsonify({
+                'success': False,
+                'error': f'Failed to update yt-dlp: {update_result.stderr}'
+            }), 500
+
+        # Restart gunicorn
+        restart_result = subprocess.run(
+            ['/usr/bin/sudo', '/usr/bin/systemctl', 'restart', 'gunicorn.service'],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        if restart_result.returncode != 0:
+            return jsonify({
+                'success': False,
+                'error': f'Failed to restart gunicorn: {restart_result.stderr}'
+            }), 500
+
+        return jsonify({
+            'success': True,
+            'message': 'yt-dlp updated and gunicorn restarted'
+        })
+
+    except subprocess.TimeoutExpired:
+        return jsonify({
+            'success': False,
+            'error': 'Update operation timed out'
+        }), 500
+    except Exception as e:
+        current_app.logger.error(f"Error updating yt-dlp: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+

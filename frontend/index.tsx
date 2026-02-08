@@ -17,6 +17,7 @@ const YoutubeTablet: React.FC = () => {
     addSubscription,
     removeSubscription,
     fetchSubscription,
+    updateYtdlp,
     getSettings,
     updateSettings,
     getSchedule,
@@ -99,6 +100,11 @@ const YoutubeTablet: React.FC = () => {
     setSchedule(updated);
   };
 
+  const handleUpdateYtdlp = async () => {
+    const message = await updateYtdlp();
+    return message;
+  };
+
   return (
     <div className="youtube-tablet">
       {error && (
@@ -154,6 +160,7 @@ const YoutubeTablet: React.FC = () => {
               <DownloadSettings
                 settings={settings}
                 onUpdate={handleUpdateSettings}
+                onUpdateYtdlp={handleUpdateYtdlp}
                 isLoading={isLoading}
               />
             </div>

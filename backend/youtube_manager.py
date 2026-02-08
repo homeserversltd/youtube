@@ -99,16 +99,16 @@ class YoutubeManager:
                 )
 
     def _ensure_download_dir(self) -> None:
-        """Ensure the download directory exists using mkdir -p command."""
+        """Ensure the download directory exists."""
         try:
-            subprocess.run(
-                ['mkdir', '-p', str(self.DOWNLOAD_DIR)],
-                check=True,
-                timeout=10
+            self.DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+        except OSError as e:
+            # Log error but don't fail - will retry on use
+            log = logging.getLogger(__name__)
+            log.warning(
+                "YouTube manager: could not create download_dir at %s: %s (will retry on use)",
+                self.DOWNLOAD_DIR, e,
             )
-        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-            # Log error but don't fail - Path.mkdir will handle it if needed
-            pass
     
     def _validate_url(self, url: str) -> bool:
         """Validate that URL is a valid YouTube URL."""

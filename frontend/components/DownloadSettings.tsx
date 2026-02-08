@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Button } from '../../../src/components/ui';
 import { YoutubeSettings } from '../types';
 
 interface DownloadSettingsProps {
   settings: YoutubeSettings;
   onUpdate: (settings: Partial<YoutubeSettings>) => Promise<void>;
+  onUpdateYtdlp: () => Promise<string>;
   isLoading?: boolean;
 }
 
@@ -30,14 +32,17 @@ const getQualityFromFormat = (format: string): string => {
 export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
   settings,
   onUpdate,
+  onUpdateYtdlp,
   isLoading = false
 }) => {
   const [quality, setQuality] = useState(settings.quality);
   const [format, setFormat] = useState(settings.format);
   const [autoHardlink, setAutoHardlink] = useState(settings.auto_hardlink ?? false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUpdatingYtdlp, setIsUpdatingYtdlp] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [ytdlpMessage, setYtdlpMessage] = useState<string | null>(null);
   const formatManuallyEdited = useRef(false);
 
   useEffect(() => {
@@ -84,6 +89,21 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
       setError(err instanceof Error ? err.message : 'Failed to update settings');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleUpdateYtdlp = async () => {
+    setError(null);
+    setYtdlpMessage(null);
+
+    setIsUpdatingYtdlp(true);
+    try {
+      const message = await onUpdateYtdlp();
+      setYtdlpMessage(message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update yt-dlp');
+    } finally {
+      setIsUpdatingYtdlp(false);
     }
   };
 
@@ -142,14 +162,25 @@ export const DownloadSettings: React.FC<DownloadSettingsProps> = ({
 
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
+        {ytdlpMessage && <div className="success-message">{ytdlpMessage}</div>}
 
-        <button
-          onClick={handleSave}
-          disabled={isSaving || isLoading}
-          className="save-button"
-        >
-          {isSaving ? 'Saving...' : 'Save Settings'}
-        </button>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem' }}>
+          <button
+            onClick={handleSave}
+            disabled={isSaving || isLoading}
+            className="save-button"
+          >
+            {isSaving ? 'Saving...' : 'Save Settings'}
+          </button>
+
+          <Button
+            variant="outline"
+            onClick={handleUpdateYtdlp}
+            disabled={isUpdatingYtdlp || isLoading}
+          >
+            {isUpdatingYtdlp ? 'Updating yt-dlp...' : 'Update yt-dlp'}
+          </Button>
+        </div>
       </div>
     </div>
   );

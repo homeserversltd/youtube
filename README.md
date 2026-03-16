@@ -1,5 +1,7 @@
 # YouTube Premium Tab
 
+**Disclaimer:** This software is provided in pre-release form "as is" and "as available," without warranty of any kind. It may not operate correctly, may corrupt or delete data, and is not intended for production use. You use it at your own risk.
+
 ## Overview
 
 Premium tab for the homeserver platform: download YouTube videos with **yt-dlp**, manage channel subscriptions, and run nightly subscription checks. Supports manual URL downloads, per-channel audio-only, configurable quality/format, optional hardlink into media library, and in-tab yt-dlp updates. See the [premium tab system](../../README.md) for platform context.
